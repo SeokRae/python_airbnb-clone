@@ -6,13 +6,6 @@ class Command(BaseCommand):
 
     help = "This command creates many Amenities"
 
-    def add_arguments(self, parser):
-        """ parser.add_argument(
-            "--times", help="This command creates many users",
-        ) """
-
-    pass
-
     def handle(self, *args, **options):
         amenities = [
             "Air conditioning",
@@ -60,4 +53,4 @@ class Command(BaseCommand):
         ]
         for a in amenities:
             Amenity.objects.create(name=a)
-        self.stdout.write(self.style.SUCCESS("Amenities created!"))
+        self.stdout.write(self.style.SUCCESS(f"{len(amenities)} Amenities created!"))

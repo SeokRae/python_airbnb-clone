@@ -77,8 +77,9 @@ class Room(core_models.TimeStampedModel):
 
     country = CountryField()
     city = models.CharField(max_length=80)
-    price = models.IntegerField()
     address = models.CharField(max_length=140)
+
+    price = models.IntegerField()
     guests = models.IntegerField()
     beds = models.IntegerField()
     bedrooms = models.IntegerField()
@@ -106,10 +107,12 @@ class Room(core_models.TimeStampedModel):
         all_reviews = self.reviews.all()
         all_rating = 0
 
-        for review in all_reviews:
-            all_rating += review.rating_average()
+        if len(all_reviews) > 0:
+            for review in all_reviews:
+                all_rating += review.rating_average()
 
-        return all_rating / len(all_reviews)
+            return all_rating / len(all_reviews)
+        return 0
 
     def save(self, *args, **kwargs):
         self.city = str.capitalize(self.city)
