@@ -1,5 +1,5 @@
-from django.shortcuts import render
-from math import ceil
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.shortcuts import render, redirect
 from . import models
 
 # Create your views here.
@@ -7,23 +7,16 @@ from . import models
 
 def all_rooms(request):
     page = request.GET.get("page", 1)
-    page = int(page or 1)
+    room_list = models.Room.objects.all()
 
-    page_size = 10
+    paginator = Paginator(room_list, 10, orphans=5)
 
-    limit = page * page_size
-    offset = limit - page_size
+    try:
+        rooms = paginator.page(int(page))  # page(), get_page() 차이
+        return render(request, "rooms/all_rooms.html", context={"page": rooms},)
 
-    all_rooms = models.Room.objects.all()[offset:limit]
-    page_count = ceil(models.Room.objects.count() / page_size)
+    except ValueError:
+        return redirect("/")
 
-    return render(
-        request,
-        "rooms/all_rooms.html",
-        context={
-            "rooms": all_rooms,
-            "page": page,
-            "page_count": page_count,
-            "page_range": range(1, page_count + 1),
-        },
-    )
+    except (EmptyPage, PageNotAnInteger):
+        return redirect("/")
