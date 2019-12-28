@@ -1,22 +1,18 @@
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.shortcuts import render, redirect
+# https://docs.djangoproject.com/en/2.2/ref/class-based-views/generic-display/
+from django.views.generic import ListView
 from . import models
 
 # Create your views here.
 
 
-def all_rooms(request):
-    page = request.GET.get("page", 1)
-    room_list = models.Room.objects.all()
+class HomeView(ListView):
 
-    paginator = Paginator(room_list, 10, orphans=5)
+    """ HomeView class Definition """
 
-    try:
-        rooms = paginator.page(int(page))  # page(), get_page() 차이
-        return render(request, "rooms/all_rooms.html", context={"page": rooms},)
+    model = models.Room
 
-    except ValueError:
-        return redirect("/")
+    paginate_by = 10  # paging
+    paginate_orphans = 2
+    ordering = "created"
 
-    except (EmptyPage, PageNotAnInteger):
-        return redirect("/")
+    pass
