@@ -40,7 +40,6 @@ class Command(BaseCommand):
         for pk in lists_pks:
             list_model = list_models.List.objects.get(pk=pk)
             to_add = all_rooms[random.randint(0, 5) : random.randint(6, 30)]
-            print(to_add)
             list_model.rooms.add(*to_add)
 
         self.stdout.write(self.style.SUCCESS(f"{number} {NAME} created Success !"))
