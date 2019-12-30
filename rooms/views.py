@@ -101,8 +101,12 @@ class SearchView(View):
                 page = request.GET.get("page", 1)
                 rooms = paginator.get_page(page)
 
+                query_string = request.environ.get("QUERY_STRING")
+
                 return render(
-                    request, "rooms/search.html", {"form": form, "rooms": rooms}
+                    request,
+                    "rooms/search.html",
+                    {"form": form, "rooms": rooms, "query_string": query_string},
                 )
         else:
 

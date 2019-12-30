@@ -1,34 +1,34 @@
 {% extends "base.html" %}
 
 {% block page_title %}
-    Search
+Search
 {% endblock page_title %}
 
 {% block search-bar %}{% endblock search-bar %}
 
 {% block content %}
-    <h2>Search</h2>
-    
-    <form method="get" action="{% url 'rooms:search' %}">
-        {{form.as_p}}
-        <button>Search</button>
-    </form>
+<h2>Search</h2>
 
-     <h3>Results</h3>
+<form method="get" action="{% url 'rooms:search' %}">
+    {{form.as_p}}
+    <button>Search</button>
+</form>
 
-    {% for room in rooms %}
-        <h3>{{room.name}}</h3>
-    {% endfor %}
+<h3>Results</h3>
 
-    
-    {% if rooms.has_previous %}
-        <a href="?page={{rooms.previous_page_number}}">Previous</a>
-    {% endif %}
+{% for room in rooms %}
+<h3>{{room.name}}</h3>
+{% endfor %}
 
-    Page {{rooms.number}} of {{rooms.paginator.num_pages}}
 
-    {% if rooms.has_next %}
-        <a href="?page={{rooms.next_page_number}}">Next</a>
-    {% endif %}
-    
+{% if rooms.has_previous %}
+<a href="?{{query_string}}&page={{rooms.previous_page_number}}">Previous</a>
+{% endif %}
+
+Page {{rooms.number}} of {{rooms.paginator.num_pages}}
+
+{% if rooms.has_next %}
+<a href="?{{query_string}}&page={{rooms.next_page_number}}">Next</a>
+{% endif %}
+
 {% endblock content %}
