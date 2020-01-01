@@ -111,3 +111,6 @@ dmypy.json
 
 # media path
 uploads/
+
+# Environment
+.env
