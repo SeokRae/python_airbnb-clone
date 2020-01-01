@@ -8,6 +8,7 @@ from . import forms, models
 
 # github login
 import os
+import requests
 
 # Create your views here.
 
@@ -87,4 +88,16 @@ def github_login(request):
 
 
 def github_callback(request):
-    pass
+    code = request.GET.get("code", None)
+
+    client_id = os.environ.get("GITHUB_CLIENT_ID")
+    client_secret = os.environ.get("GITHUB_CLIENT_SECRET")
+    access_url = "https://github.com/login/oauth/access_token"
+    if code is not None:
+        reqeust = requests.post(
+            f"{access_url}?client_id={client_id}&client_secret={client_secret}&code={code}",
+            headers={"Accept": "application/json"},
+        )
+        print(reqeust.json())
+    else:
+        return redirect(reverse("core:home"))
