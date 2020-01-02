@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, reverse
+from django.shortcuts import redirect, reverse
 
 # http://ccbv.co.uk/projects/Django/2.2/django.views.generic.edit/FormView
 from django.views.generic import FormView
@@ -77,27 +77,72 @@ def complete_varification(request, key):
     return redirect(reverse("core:home"))
 
 
+# https://developer.github.com/apps/building-oauth-apps/authorizing-oauth-apps/
 def github_login(request):
     client_id = os.environ.get("GITHUB_CLIENT_ID")
-    redirect_uri = "http://localhost:8000/users/login/github/callback"
     auth_url = "https://github.com/login/oauth/authorize"
+    redirect_uri = "http://localhost:8000/users/login/github/callback"
     url = (
         f"{auth_url}?client_id={client_id}&redirect_uri={redirect_uri}&scope=read:user"
     )
     return redirect(url)
 
 
-def github_callback(request):
-    code = request.GET.get("code", None)
+class GitHubException(Exception):
+    pass
 
-    client_id = os.environ.get("GITHUB_CLIENT_ID")
-    client_secret = os.environ.get("GITHUB_CLIENT_SECRET")
-    access_url = "https://github.com/login/oauth/access_token"
-    if code is not None:
-        reqeust = requests.post(
-            f"{access_url}?client_id={client_id}&client_secret={client_secret}&code={code}",
-            headers={"Accept": "application/json"},
-        )
-        print(reqeust.json())
-    else:
-        return redirect(reverse("core:home"))
+
+# user Accept 될 때 웹사이트 로그인
+def github_callback(request):
+    try:
+        code = request.GET.get("code", None)
+
+        client_id = os.environ.get("GITHUB_CLIENT_ID")
+        client_secret = os.environ.get("GITHUB_CLIENT_SECRET")
+        access_url = "https://github.com/login/oauth/access_token"
+
+        if code is not None:
+            result = requests.post(
+                f"{access_url}?client_id={client_id}&client_secret={client_secret}&code={code}",
+                headers={"Accept": "application/json"},
+            )
+            result_json = result.json()
+            error = result_json.get("error", None)
+
+            if error is not None:
+                raise GitHubException()
+            else:
+                access_token = result_json.get("access_token")
+                profile_request = requests.get(
+                    "https://api.github.com/user",
+                    headers={
+                        "Authorization": f"token {access_token}",
+                        "Accept": "application/json",
+                    },
+                )
+                # user profile
+                profile_json = profile_request.json()
+                username = profile_json.get("login", None)
+                # user 없을 경우
+                if username is not None:
+                    name = profile_json.get("name")
+                    email = profile_json.get("email")
+                    bio = profile_json.get("bio")
+                    user = models.User.objects.get(email=email)
+
+                    # user check
+                    if user is not None:
+                        return redirect(reverse("users.:login"))
+                    else:
+                        user = models.User.objects.create(
+                            username=email, first_name=name, bio=bio, email=email
+                        )
+                        login(request, user)
+                        return redirect(reverse("core:home"))
+                else:
+                    raise GitHubException()
+        else:
+            raise GitHubException()
+
+    except GitHubException:  # 예외 발생시 redirect
+        return redirect(reverse("users:login"))
