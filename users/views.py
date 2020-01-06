@@ -10,6 +10,9 @@ from . import forms, models
 import os
 import requests
 
+# image
+from django.core.files.base import ContentFile
+
 # Create your views here.
 
 
@@ -167,11 +170,13 @@ def kakao_login(request):
     kakao_oauth_url = "https://kauth.kakao.com/oauth/authorize"
     client_id = os.environ.get("KAKAO_CLIENT_ID")
     redirect_uri = "http://localhost:8000/users/login/kakao/callback"
+    # kakao API redirect_url
     return redirect(
         f"{kakao_oauth_url}?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code"
     )
 
 
+# kakao Exception
 class KakaoException(Exception):
     pass
 
@@ -181,11 +186,14 @@ def kakao_callback(request):
         authorize_code = request.GET.get("code")
         client_id = os.environ.get("KAKAO_CLIENT_ID")
         redirect_uri = "http://localhost:8000/users/login/kakao/callback"
+        token_url = "https://kauth.kakao.com/oauth/token"
         token_request = requests.get(
-            f"https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id={client_id}&redirect_uri={redirect_uri}&code={authorize_code}"
+            f"{token_url}?grant_type=authorization_code&client_id={client_id}&redirect_uri={redirect_uri}&code={authorize_code}"
         )
         token_json = token_request.json()
         error = token_json.get("error", None)
+
+        # kakao error check
         if error is not None:
             raise KakaoException()
         # https://developers.kakao.com/docs/restapi/user-management#%EC%82%AC%EC%9A%A9%EC%9E%90-%EC%A0%95%EB%B3%B4-%EC%9A%94%EC%B2%AD
@@ -203,13 +211,15 @@ def kakao_callback(request):
         profile_account = profile_json.get("kakao_account", None)
         email = profile_account.get("email", None)
 
+        # email None check
         if email is None:
             raise KakaoException()
 
         profile = profile_account.get("profile")
+
         # properties
         nickname = profile.get("nickname")
-        profile_image_url = profile.get("profile_image_url")
+        profile_image = profile.get("profile_image_url")
 
         # user check
         try:
@@ -218,17 +228,24 @@ def kakao_callback(request):
                 raise KakaoException()
 
         except models.User.DoesNotExist:  # user 없으면 만들기
+
             user = models.User.objects.create(
                 email=email,
                 username=email,
                 first_name=nickname,
                 login_method=models.User.LOGIN_KAKAO,
                 email_verified=True,
-                # avatar=profile_image,
             )
             user.set_unusable_password()
             user.save()
-        print(user)
+
+            # profile image
+            if profile_image is not None:
+                photo_request = requests.get(profile_image)
+                user.avatar.save(
+                    f"{nickname}-avatar", ContentFile(photo_request.content)
+                )
+
         login(request, user)
         return redirect(reverse("core:home"))
 

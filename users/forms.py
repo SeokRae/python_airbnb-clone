@@ -1,6 +1,9 @@
 from django import forms
 from . import models
 
+# form
+from django.contrib.auth.forms import UserCreationForm
+
 
 class LoginForm(forms.Form):
     """ LoginForm class Definition """
@@ -23,6 +26,10 @@ class LoginForm(forms.Form):
             self.add_error("email", forms.ValidationError("User does not exist"))
 
 
+class TmpForm(UserCreationForm):
+    pass
+
+
 class SignUpForm(forms.ModelForm):
     """ SignUpForm Form Definition """
 
@@ -33,9 +40,11 @@ class SignUpForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)
     password1 = forms.CharField(widget=forms.PasswordInput, label="Confirm Password")
 
+    # password check confirm
     def clean_password1(self):
         password = self.cleaned_data.get("password")
         password1 = self.cleaned_data.get("password1")
+
         # password same Check
         if password != password1:
             raise forms.ValidationError("Password confirmation does not match")
