@@ -26,10 +26,6 @@ class LoginForm(forms.Form):
             self.add_error("email", forms.ValidationError("User does not exist"))
 
 
-class TmpForm(UserCreationForm):
-    pass
-
-
 class SignUpForm(forms.ModelForm):
     """ SignUpForm Form Definition """
 
