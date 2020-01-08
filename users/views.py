@@ -13,6 +13,9 @@ import requests
 # image
 from django.core.files.base import ContentFile
 
+# messages
+from django.contrib import messages
+
 # Create your views here.
 
 
@@ -111,7 +114,7 @@ def github_callback(request):
             error = token_json.get("error", None)
             # github token error
             if error is not None:
-                raise GitHubException()
+                raise GitHubException("Can't get access token")
             else:
                 access_token = token_json.get("access_token")
                 profile_request = requests.get(
@@ -134,7 +137,9 @@ def github_callback(request):
                         # aready user exist
                         user = models.User.objects.get(email=email)
                         if user.login_method != models.User.LOGIN_GITHUB:
-                            raise GitHubException()
+                            raise GitHubException(
+                                f"Please log in with: {user.login_method}"
+                            )
 
                     except models.User.DoesNotExist:
                         user = models.User.objects.create(
@@ -151,15 +156,16 @@ def github_callback(request):
 
                     # 사용자가 이미 있으면 login, 없으면 만들고 로그인
                     login(request, user)
-
+                    messages.success(request, f"Welcome back {user.first_name}")
                     return redirect(reverse("core:home"))
 
                 else:
-                    raise GitHubException()
+                    raise GitHubException("Can't get your profile")
         else:
-            raise GitHubException()
+            raise GitHubException("Can't get code")
 
-    except GitHubException:  # 예외 발생시 redirect
+    except GitHubException as e:  # 예외 발생시 redirect
+        messages.error(request, e)
         return redirect(reverse("users:login"))
 
 
@@ -181,19 +187,19 @@ class KakaoException(Exception):
 
 def kakao_callback(request):
     try:
-        authorize_code = request.GET.get("code")
+        code = request.GET.get("code")
         client_id = os.environ.get("KAKAO_CLIENT_ID")
         redirect_uri = "http://localhost:8000/users/login/kakao/callback"
         token_url = "https://kauth.kakao.com/oauth/token"
         token_request = requests.get(
-            f"{token_url}?grant_type=authorization_code&client_id={client_id}&redirect_uri={redirect_uri}&code={authorize_code}"
+            f"{token_url}?grant_type=authorization_code&client_id={client_id}&redirect_uri={redirect_uri}&code={code}"
         )
         token_json = token_request.json()
         error = token_json.get("error", None)
 
         # kakao error check
         if error is not None:
-            raise KakaoException()
+            raise KakaoException("Can't get authorization code")
         # https://developers.kakao.com/docs/restapi/user-management#%EC%82%AC%EC%9A%A9%EC%9E%90-%EC%A0%95%EB%B3%B4-%EC%9A%94%EC%B2%AD
         access_token = token_json.get("access_token")
         profile_domain = "https://kapi.kakao.com"
@@ -211,7 +217,7 @@ def kakao_callback(request):
 
         # email None check
         if email is None:
-            raise KakaoException()
+            raise KakaoException("Please also give me your email")
 
         profile = profile_account.get("profile")
 
@@ -223,7 +229,7 @@ def kakao_callback(request):
         try:
             user = models.User.objects.get(email=email)
             if user.login_method != models.User.LOGIN_KAKAO:
-                raise KakaoException()
+                raise KakaoException(f"Please login with: {user.login_method}")
 
         except models.User.DoesNotExist:  # user 없으면 만들기
 
@@ -244,8 +250,10 @@ def kakao_callback(request):
                     f"{nickname}-avatar", ContentFile(photo_request.content)
                 )
 
+        messages.success(request, f"Welcome back {user.first_name}")
         login(request, user)
         return redirect(reverse("core:home"))
 
-    except KakaoException:
+    except KakaoException as e:
+        messages.error(request, e)
         return redirect(reverse("users:login"))
