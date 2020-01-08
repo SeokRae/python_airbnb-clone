@@ -22,8 +22,6 @@ class LoginView(FormView):
     form_class = forms.LoginForm
     success_url = reverse_lazy("core:home")
 
-    initial = {"email": "kslbsh@gmail.com"}
-
     def form_valid(self, form):
         email = form.cleaned_data.get("email")
         password = form.cleaned_data.get("password")
