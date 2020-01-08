@@ -115,6 +115,11 @@ class Room(core_models.TimeStampedModel):
             return round(all_rating / len(all_reviews), 2)
         return 0
 
+    # mainpage photo print
+    def first_photo(self):
+        (photo,) = self.photos.all()[:1]
+        return photo.file.url
+
     def save(self, *args, **kwargs):
         self.city = str.capitalize(self.city)
         super().save(*args, **kwargs)
