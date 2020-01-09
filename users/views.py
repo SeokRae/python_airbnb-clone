@@ -18,6 +18,9 @@ from django.core.files.base import ContentFile
 # messages
 from django.contrib import messages
 
+# session
+from django.contrib.auth.decorators import login_required
+
 # Create your views here.
 
 
@@ -302,8 +305,8 @@ class UpdateProfileView(mixins.LoggedInOnlyView, SuccessMessageMixin, UpdateView
 
 
 class UpdatePasswordView(
-    mixins.EmailLoginOnlyView,
     mixins.LoggedInOnlyView,
+    mixins.EmailLoginOnlyView,
     SuccessMessageMixin,
     PasswordChangeView,
 ):
@@ -324,3 +327,12 @@ class UpdatePasswordView(
 
     def get_success_url(self):
         return self.request.user.get_absolute_url()
+
+
+@login_required
+def switch_hosting(request):
+    try:
+        del request.session["is_hosting"]
+    except KeyError:
+        request.session["is_hosting"] = True
+    return redirect(reverse("core:home"))
