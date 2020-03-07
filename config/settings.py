@@ -39,11 +39,13 @@ DJANGO_APPS = [
 ]
 
 # 프로젝트 진행을 위한 추가 app 적용
-THIRD_PARTY_APPS = []
+THIRD_PARTY_APPS = [
+    "django-countries",
+]
 
 # 해당 프로젝트에 생성되는 app 추가
 PROJECT_APPS = [
-    "core.app.CoreConfig",
+    "core.apps.CoreConfig",
     "users.apps.UsersConfig",
     "rooms.apps.RoomsConfig",
 ]
