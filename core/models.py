@@ -1,0 +1,15 @@
+from django.db import models
+
+# Create your models here.
+
+
+class TimeStampedModel(models.Model):
+
+    """ Time Stamped Model """
+
+    created = models.DateTimeField()
+    updated = models.DateTimeField()
+
+    # 데이터베이스에 적용하지 않도록 abstract 설정
+    class Meta:
+        abstract = True

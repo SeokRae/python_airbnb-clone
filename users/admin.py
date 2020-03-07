@@ -1,12 +1,28 @@
 from django.contrib import admin
+# admin write page custom
+from django.contrib.auth.admin import UserAdmin
 
 # admin.py 파일과 동일한 폴더 내에 models를 호출 (User.class)
 from . import models
 
 # Register your models here.
 @admin.register(models.User)
-class CustomUserAdmin(admin.ModelAdmin):
+class CustomUserAdmin(UserAdmin):
     """ Custom User Admin """
 
-    list_display = ("username", "email", "gender", "language", "currency", "superhost")
-    list_filter = ("language", "currency", "superhost")
+    fieldsets = UserAdmin.fieldsets + (
+        (
+            "Custom Profile",
+            {
+                "fields": (
+                    "avatar",
+                    "gender",
+                    "bio",
+                    "birthdate",
+                    "language",
+                    "currency",
+                    "superhost",
+                )
+            },
+        ),
+    )

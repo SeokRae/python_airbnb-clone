@@ -38,8 +38,14 @@ DJANGO_APPS = [
     "django.contrib.staticfiles",
 ]
 
+# 프로젝트 진행을 위한 추가 app 적용
+THIRD_PARTY_APPS = []
+
+# 해당 프로젝트에 생성되는 app 추가
 PROJECT_APPS = [
+    "core.app.CoreConfig",
     "users.apps.UsersConfig",
+    "rooms.apps.RoomsConfig",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS
@@ -118,4 +124,5 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 
+# Django의 User를 custom 해서 사용하기 위한 설정
 AUTH_USER_MODEL = "users.User"
