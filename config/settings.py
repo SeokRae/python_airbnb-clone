@@ -41,6 +41,7 @@ DJANGO_APPS = [
 # 프로젝트 진행을 위한 추가 app 적용
 THIRD_PARTY_APPS = [
     "django-countries",
+    "django-seed",
 ]
 
 # 해당 프로젝트에 생성되는 app 추가
@@ -49,6 +50,9 @@ PROJECT_APPS = [
     "users.apps.UsersConfig",
     "rooms.apps.RoomsConfig",
     "reviews.apps.ReviewsConfig",
+    "reservations.apps.ReservationsConfig",
+    "lists.apps.ListsConfig",
+    "conversations.apps.ConversationsConfig",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS
