@@ -16,9 +16,13 @@ class Review(core_models.TimeStampedModel):
     check_in = models.IntegerField()
     value = models.IntegerField()
     # 유저 삭제 시 숙소도 삭제
-    user = models.ForeignKey("users.User", on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        "users.User", related_name="reviews", on_delete=models.CASCADE
+    )
     # 숙소 삭제 시 하위 테이블 데이터도 삭제
-    room = models.ForeignKey("rooms.Room", on_delete=models.CASCADE)
+    room = models.ForeignKey(
+        "rooms.Room", related_name="reviews", on_delete=models.CASCADE
+    )
 
     def __str__(self):
         # python3 String 쓰는 방식
