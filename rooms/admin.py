@@ -8,7 +8,11 @@ from . import models
 class ItemAdmin(admin.ModelAdmin):
     """ Item Admin Definition """
 
-    pass
+    # ManyToMany 필드에서 Room 객체 접근
+    list_display = ("name", "used_by")
+
+    def used_by(self, obj):
+        return obj.rooms.count()
 
 
 @admin.register(models.Photo)
@@ -52,7 +56,9 @@ class RoomAdmin(admin.ModelAdmin):
         "check_in",
         "check_out",
         "instant_book",
-        "count_amenities",  # def coun_amenities function의 반환 값
+        "count_amenities",  # def count_amenities function의 반환 값
+        "count_photos",  # def count_photos function의 반환 값
+        "total_rating",  # Model에 만든 def total_rating의 반환 값
     )
 
     list_filter = (
@@ -73,3 +79,6 @@ class RoomAdmin(admin.ModelAdmin):
     # self는 RoomAdmin, obj는 현재 행(row)
     def count_amenities(self, obj):
         return obj.amenities.count()
+
+    def count_photos(self, obj):
+        return obj.photos.count()

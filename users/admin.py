@@ -1,4 +1,5 @@
 from django.contrib import admin
+
 # admin write page custom
 from django.contrib.auth.admin import UserAdmin
 
@@ -27,6 +28,7 @@ class CustomUserAdmin(UserAdmin):
         ),
     )
 
+    # 기본 필터에 superhost 확인
     list_filter = UserAdmin.list_filter + ("superhost",)
 
     list_display = (
