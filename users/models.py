@@ -30,7 +30,7 @@ class User(AbstractUser):
     # null=True는 DB에서 적용하는 값, blank=True는 Form에서 적용하는 값
     # ImageField 사용하려면 Pillow 라이브러리 필요
     # pipenv install Pillow
-    avatar = models.ImageField(blank=True)
+    avatar = models.ImageField(upload_to="avatars", blank=True)
     gender = models.CharField(choices=GENDER_CHOICES, max_length=10, blank=True)
     bio = models.TextField(blank=True)
     # DateField

@@ -133,3 +133,8 @@ STATIC_URL = "/static/"
 
 # Django의 User를 custom 해서 사용하기 위한 설정
 AUTH_USER_MODEL = "users.User"
+
+# upload 경로 설정
+# BASE_DIR/uploads로 설정
+MEDIA_ROOT = os.path.join(BASE_DIR, "uploads")
+MEDIA_URL = "/media/"

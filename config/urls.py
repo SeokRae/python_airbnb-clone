@@ -15,7 +15,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf import settings
+
+# static 파일 제공 모듈
+from django.conf.urls.static import static
 
 urlpatterns = [
     path("admin/", admin.site.urls),
 ]
+
+# 개발 모드 or 프로덕션 모드인지 체크하여 URL Mapping
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
