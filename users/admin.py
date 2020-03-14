@@ -6,10 +6,22 @@ from django.contrib.auth.admin import UserAdmin
 # admin.py 파일과 동일한 폴더 내에 models를 호출 (User.class)
 from . import models
 
+# room model 가져오기 위함
+from rooms.models import Room
+
+
+# User에 Room을 추가 하기 위한 inline
+class RoomInline(admin.StackedInline):
+
+    model = Room
+
+
 # Register your models here.
 @admin.register(models.User)
 class CustomUserAdmin(UserAdmin):
     """ Custom User Admin """
+
+    inlines = (RoomInline,)
 
     fieldsets = UserAdmin.fieldsets + (
         (
