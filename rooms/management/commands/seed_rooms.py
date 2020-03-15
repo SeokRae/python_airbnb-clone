@@ -5,14 +5,16 @@ from django_seed import Seed
 from rooms import models as room_models
 from users import models as user_models
 
+NAME = "rooms"
+
 
 class Command(BaseCommand):
 
-    help = "This command creates rooms"
+    help = f"This command creates {NAME}"
 
     def add_arguments(self, parser):
         parser.add_argument(
-            "--number", default=2, type=int, help="How many rooms you want to create"
+            "--number", default=2, type=int, help=f"How many {NAME} you want to create"
         )
 
     # room 만들기
@@ -82,4 +84,4 @@ class Command(BaseCommand):
                 self.style.SUCCESS(f"{room.house_rules.count()} apply house_rule room!")
             )
             self.stdout.write(self.style.SUCCESS(f" * create {room.name} room"))
-        self.stdout.write(self.style.SUCCESS(f"{number} Room created!"))
+        self.stdout.write(self.style.SUCCESS(f"{number} {NAME} created!"))
