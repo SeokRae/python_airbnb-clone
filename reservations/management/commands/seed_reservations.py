@@ -1,12 +1,12 @@
 import random
 from django.core.management.base import BaseCommand
-from django.contrib.admin.utils import flatten
+from datetime import datetime, timedelta
 from django_seed import Seed
+from reservations import models as revservation_models
 from rooms import models as room_models
 from users import models as user_models
-from lists import models as list_models
 
-NAME = "lists"
+NAME = "reservations"
 
 
 class Command(BaseCommand):
@@ -29,16 +29,19 @@ class Command(BaseCommand):
 
         # seed entity 추가
         seeder.add_entity(
-            list_models.List, number, {"user": lambda x: random.choice(users)}
+            revservation_models.Reservation,
+            number,
+            {
+                # list방식의 choice도 가능
+                "status": lambda x: random.choice(["pending", "confirmed", "canceled"]),
+                "guest": lambda x: random.choice(users),
+                "room": lambda x: random.choice(rooms),
+                # dateTime방식 만들기
+                "check_in": lambda x: datetime.now(),
+                "check_out": lambda x: datetime.now()
+                + timedelta(days=random.randint(3, 25)),
+            },
         )
 
-        created_list = seeder.execute()
-        clean_list = flatten(created_list.values())
-
-        for pk in clean_list:
-            list_model = list_models.List.objects.get(pk=pk)
-            to_add = rooms[random.randint(0, 5) : random.randint(6, 30)]
-            # to_add는 QuerySet, *to_add는 QuerySet을 List로 풀어준다고 함
-            list_model.rooms.add(*to_add)
-
+        seeder.execute()
         self.stdout.write(self.style.SUCCESS(f"{number} {NAME} created"))
