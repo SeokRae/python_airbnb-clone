@@ -27,5 +27,4 @@ class HomeView(ListView):
 
 # argument pk는 urlpattern에 설정된 parameter 값으로 넘어오게 됨
 def room_detail(request, pk):
-    print(pk)
     return render(request, "rooms/detail.html")
