@@ -5,19 +5,19 @@ Home
 
 {% block content %}
 
-{% for room in rooms.object_list  %}
+{% for room in pages.object_list  %}
 <h3>{{room.name}} / ${{room.price}}</h3>
 {% endfor %}
 
 <h5>
-    {% if rooms.has_previous %}
-        <a href="?page={{rooms.number|add:-1}}">Previous</a>
+    {% if pages.has_previous %}
+        <a href="?page={{pages.previous_page_number}}">Previous</a>
     {% endif %}
 
-    Page {{rooms.number}} of {{rooms.paginator.num_pages}}
+    Page {{pages.number}} of {{pages.paginator.num_pages}}
 
-    {% if rooms.has_next  %}
-        <a href="?page={{rooms.number|add:1}}">Next</a>
+    {% if pages.has_next  %}
+        <a href="?page={{pages.next_page_number}}">Next</a>
     {% endif %}
 </h5>
 
