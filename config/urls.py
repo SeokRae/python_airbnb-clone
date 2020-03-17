@@ -23,6 +23,7 @@ from django.conf.urls.static import static
 # core에서 app의 urls 관리할 수 있도록 core.urls 추가
 urlpatterns = [
     path("", include("core.urls", namespace="core")),
+    path("rooms/", include("rooms.urls", namespace="rooms")),
     path("admin/", admin.site.urls),
 ]
 
