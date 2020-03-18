@@ -1,4 +1,4 @@
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 from django.http import Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse
@@ -27,11 +27,9 @@ class HomeView(ListView):
         ordering = ["-id"]
 
 
-# argument pk는 urlpattern에 설정된 parameter 값으로 넘어오게 됨
-def room_detail(request, pk):
-    try:
-        room = models.Room.objects.get(pk=pk)
-        return render(request, "rooms/detail.html", {"room": room})
-    except models.Room.DoesNotExist:
-        #  return redirect(reverse("core:home"))
-        raise Http404()
+# DetailView는 기본적으로 url argument로 pk를 찾는다.
+class RoomDetail(DetailView):
+
+    """ RoomDetail Definition """
+
+    model = models.Room
