@@ -1,7 +1,6 @@
 from django.views.generic import ListView, DetailView
-from django.http import Http404
-from django.shortcuts import render, redirect
-from django.urls import reverse
+from django_countries import countries
+from django.shortcuts import render
 from . import models
 
 # Create your views here.
@@ -33,3 +32,18 @@ class RoomDetail(DetailView):
     """ RoomDetail Definition """
 
     model = models.Room
+
+
+# function-based search view
+def search(request):
+    # ?city= 가 빈 값이면 모르겠는데
+    # queryString이 없을 경우 예외처리하고 /search/ 경로로 이동
+    city = request.GET.get("city", "anywhere")
+    city = str.capitalize(city)
+    room_types = models.RoomType.objects.all()
+    return render(
+        request,
+        "rooms/search.html",
+        # template으로 넘겨줄 context (city, countries, room_types)
+        {"city": city, "countries": countries, "room_types": room_types},
+    )
