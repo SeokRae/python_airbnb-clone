@@ -57,7 +57,7 @@ PROJECT_APPS = [
 
 CUSTOM_APPS = []
 
-INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS + CUSTOM_APPS
+INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -117,7 +117,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "en-us"  # "ko-kr"
 
 TIME_ZONE = "Asia/Seoul"
 

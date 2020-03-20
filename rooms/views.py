@@ -100,10 +100,8 @@ class SearchView(View):
                 for facility in facilities:
                     qs = qs.filter(facilities=facility)
 
-                paginator = Paginator(qs, 3, orphans=1)
-
+                paginator = Paginator(qs, 5, orphans=2)
                 page = request.GET.get("page", 1)
-
                 rooms = paginator.get_page(page)
 
                 return render(

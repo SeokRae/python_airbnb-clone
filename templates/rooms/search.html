@@ -22,21 +22,24 @@
     {% for room in rooms %}
         <h3>{{room.name}}</h3>
     {% endfor %}
+    
+    {% if rooms %}
+        {% if rooms.has_previous %}
+            <a href="?{% param_replace page=1 %}">First</a>
+            {% if rooms.previous_page_number != 1 %}
+                <a href="?{% param_replace page=rooms.previous_page_number %}">Previous</a>
+            {% endif %}
+        {% endif %}
+        
+        Page {{ rooms.number }} of {{ rooms.paginator.num_pages}}
 
-    {% if rooms.has_previous %}
-        <a href="?{% param_replace page=1 %}">First</a>
-        {% if rooms.previous_page_number != 1 %}
-            <a href="?{% param_replace page=rooms.previous_page_number %}">Previous</a>
+        {% if rooms.has_next %}
+            {% if rooms.next_page_number != paginator.num_pages %}
+                <a href="?{% param_replace page=rooms.next_page_number %}">Next</a>
+            {% endif %}
+            <a href="?{% param_replace page=paginator.num_pages %}">Last</a>
         {% endif %}
     {% endif %}
-
-    Page {{ rooms.number }} of {{ rooms.paginator.num_pages}}
-
-    {% if rooms.has_next %}
-        {% if rooms.next_page_number != paginator.num_pages %}
-            <a href="?{% param_replace page=rooms.next_page_number %}">Next</a>
-        {% endif %}
-        <a href="?{% param_replace page=paginator.num_pages %}">Last</a>
-    {% endif %}
+        
 
 {% endblock content %} 
