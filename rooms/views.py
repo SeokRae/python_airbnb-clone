@@ -1,5 +1,6 @@
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, View
 from django.shortcuts import render
+from django.core.paginator import Paginator
 from . import models, forms
 
 # Create your views here.
@@ -33,69 +34,83 @@ class RoomDetail(DetailView):
     model = models.Room
 
 
-# function-based search view
-def search(request):
+# class-based View
+class SearchView(View):
+    """ SearchView Definition """
 
-    country = request.GET.get("country")
+    # function-based search view
+    def get(self, request):
 
-    if country:
-        # bounded form > forms.SearchForm(request.GET)
-        form = forms.SearchForm(request.GET)
+        country = request.GET.get("country")
 
-        if form.is_valid():
-            city = form.cleaned_data.get("city")
-            country = form.cleaned_data.get("country")
-            room_type = form.cleaned_data.get("room_type")
-            price = form.cleaned_data.get("price")
-            guests = form.cleaned_data.get("guests")
-            bedrooms = form.cleaned_data.get("bedrooms")
-            beds = form.cleaned_data.get("beds")
-            baths = form.cleaned_data.get("baths")
-            instant_book = form.cleaned_data.get("instant_book")
-            superhost = form.cleaned_data.get("superhost")
-            amenities = form.cleaned_data.get("amenities")  # QuerySet
-            facilities = form.cleaned_data.get("facilities")  # QuerySet
+        if country:
+            # bounded form > forms.SearchForm(request.GET)
+            form = forms.SearchForm(request.GET)
 
-            filter_args = {}
+            if form.is_valid():
+                city = form.cleaned_data.get("city")
+                country = form.cleaned_data.get("country")
+                room_type = form.cleaned_data.get("room_type")
+                price = form.cleaned_data.get("price")
+                guests = form.cleaned_data.get("guests")
+                bedrooms = form.cleaned_data.get("bedrooms")
+                beds = form.cleaned_data.get("beds")
+                baths = form.cleaned_data.get("baths")
+                instant_book = form.cleaned_data.get("instant_book")
+                superhost = form.cleaned_data.get("superhost")
+                amenities = form.cleaned_data.get("amenities")  # QuerySet
+                facilities = form.cleaned_data.get("facilities")  # QuerySet
 
-            if city != "Anywhere":
-                filter_args["city__startswith"] = city
+                filter_args = {}
 
-            filter_args["country"] = country
+                if city != "Anywhere":
+                    filter_args["city__startswith"] = city
 
-            if room_type is not None:
-                filter_args["room_type"] = room_type
+                filter_args["country"] = country
 
-            if price is not None:
-                filter_args["price__lte"] = price
+                if room_type is not None:
+                    filter_args["room_type"] = room_type
 
-            if guests is not None:
-                filter_args["guests__gte"] = guests
+                if price is not None:
+                    filter_args["price__lte"] = price
 
-            if bedrooms is not None:
-                filter_args["bedrooms__gte"] = bedrooms
+                if guests is not None:
+                    filter_args["guests__gte"] = guests
 
-            if beds is not None:
-                filter_args["beds__gte"] = beds
+                if bedrooms is not None:
+                    filter_args["bedrooms__gte"] = bedrooms
 
-            if baths is not None:
-                filter_args["baths__gte"] = baths
+                if beds is not None:
+                    filter_args["beds__gte"] = beds
 
-            if instant_book is True:
-                filter_args["instant_book"] = True
+                if baths is not None:
+                    filter_args["baths__gte"] = baths
 
-            if superhost is True:
-                filter_args["host__superhost"] = True
+                if instant_book is True:
+                    filter_args["instant_book"] = True
 
-            for amenity in amenities:
-                rooms = models.Room.objects.filter(amenities=amenity)
+                if superhost is True:
+                    filter_args["host__superhost"] = True
 
-            for facility in facilities:
-                rooms = rooms.filter(facilities=facility)
+                qs = models.Room.objects.filter(**filter_args).order_by("-created")
 
-            rooms = rooms.filter(**filter_args)
-    else:
+                for amenity in amenities:
+                    qs = qs.filter(amenities=amenity)
 
-        form = forms.SearchForm()
+                for facility in facilities:
+                    qs = qs.filter(facilities=facility)
 
-    return render(request, "rooms/search.html", {"form": form, "rooms": rooms})
+                paginator = Paginator(qs, 3, orphans=1)
+
+                page = request.GET.get("page", 1)
+
+                rooms = paginator.get_page(page)
+
+                return render(
+                    request, "rooms/search.html", {"form": form, "rooms": rooms},
+                )
+        else:
+
+            form = forms.SearchForm()
+
+        return render(request, "rooms/search.html", {"form": form})

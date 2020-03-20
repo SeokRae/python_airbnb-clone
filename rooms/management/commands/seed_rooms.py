@@ -2,6 +2,7 @@ import random
 from django.core.management.base import BaseCommand
 from django.contrib.admin.utils import flatten
 from django_seed import Seed
+from django_countries.fields import CountryField
 from rooms import models as room_models
 from users import models as user_models
 
@@ -35,6 +36,7 @@ class Command(BaseCommand):
             {
                 "name": lambda x: seeder.faker.address(),
                 "host": lambda x: random.choice(all_users),
+                "city": lambda x: "Seoul",
                 "room_type": lambda x: random.choice(room_types),
                 "price": lambda x: random.randint(0, 300),
                 "beds": lambda x: random.randint(0, 5),
