@@ -40,7 +40,17 @@ class SignUpView(FormView):
     success_url = reverse_lazy("core:home")
 
     initial = {
-        "first_name": "SeokRae",
-        "last_name": "Kim",
-        "email": "seokr@gmail.com",
+        "first_name": "test_first",
+        "last_name": "test_last",
+        "email": "test@gmail.com",
     }
+
+    # request에서 넘어온 form 값에 대한 validation check 후에 user 등록, 로그인
+    def form_valid(self, form):
+        form.save()
+        email = form.cleaned_data.get("email")
+        password = form.cleaned_data.get("password")
+        user = authenticate(self.request, username=email, password=password)
+        if user is not None:
+            login(self.request, user)
+        return super().form_valid(form)
