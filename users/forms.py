@@ -45,7 +45,7 @@ class SignUpForm(forms.ModelForm):
         else:
             return password
 
-    # Form 클래스의 save override
+    # ModelForm의 save를 override해서 추가적으로 필요한 필드(username, password)에 대해서 작업
     def save(self, *args, **kwargs):
         # DB에는 저장하지 않고 객체만 생성
         user = super().save(commit=False)

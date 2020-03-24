@@ -42,7 +42,7 @@ class SignUpView(FormView):
     initial = {
         "first_name": "test_first",
         "last_name": "test_last",
-        "email": "test@gmail.com",
+        "email": "seok.ref@gmail.com",
     }
 
     # request에서 넘어온 form 값에 대한 validation check 후에 user 등록, 로그인
@@ -53,4 +53,5 @@ class SignUpView(FormView):
         user = authenticate(self.request, username=email, password=password)
         if user is not None:
             login(self.request, user)
+        user.verify_email()
         return super().form_valid(form)
