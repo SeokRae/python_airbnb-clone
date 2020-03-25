@@ -1,3 +1,6 @@
+import os
+import requests
+
 # Create your views here.
 from django.views.generic import FormView
 from django.urls import reverse_lazy
@@ -34,6 +37,7 @@ def log_out(request):
     return redirect(reverse("core:home"))
 
 
+# class-based view
 class SignUpView(FormView):
     template_name = "users/signup.html"
     form_class = forms.SignUpForm
@@ -57,7 +61,7 @@ class SignUpView(FormView):
         return super().form_valid(form)
 
 
-# function-based view를 통해 verified
+# email verify
 def complete_verification(request, key):
 
     try:
@@ -75,3 +79,29 @@ def complete_verification(request, key):
         # to do: add error message
         pass
     return redirect(reverse("core:home"))
+
+
+# GitHub Login
+# 1. Users are redirected to request their GitHub identity
+# 2. Users are redirected back to your site by GitHub
+# 3. Your app accesses the API with the user's access token
+def github_login(request):
+    # https://github.com/login/oauth/authorize?client_id={client_id}&redirect_uri={redirect_uri}&scope=read:user
+    client_id = os.environ.get("GH_ID")
+    redirect_uri = "http://localhost:8000/users/login/github/callback"
+    request_url = f"https://github.com/login/oauth/authorize?client_id={client_id}&redirect_uri={redirect_uri}&scope=read:user"
+    return redirect(request_url)
+
+
+# GitHub callback
+def github_callback(request):
+    client_id = os.environ.get("GH_ID")
+    client_secret = os.environ.get("GH_SECRET")
+    code = request.GET.get("code", None)
+    if code is not None:
+        callback_url = f"https://github.com/login/oauth/access_token?client_id={client_id}&client_secret={client_secret}&code={code}"
+        request = requests.post(callback_url, headers={"Accept": "application/json"},)
+        # request 확인
+        print(request.json())
+    else:
+        return redirect(reverse("core:home"))

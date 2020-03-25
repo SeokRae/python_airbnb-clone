@@ -2,6 +2,8 @@ from django.core.management.base import BaseCommand
 from django_seed import Seed
 from users.models import User
 
+NAME = "users"
+
 
 class Command(BaseCommand):
 
@@ -9,7 +11,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            "--number", default=1, type=int, help="How many users you want to create"
+            "--number", default=1, type=int, help=f"How many {NAME} you want to create"
         )
 
     def handle(self, *args, **options):
@@ -18,4 +20,4 @@ class Command(BaseCommand):
         # django의 기본 user 값은 staff가 아니고 superuser가 아니어야 함
         seeder.add_entity(User, number, {"is_staff": False, "is_superuser": False})
         seeder.execute()
-        self.stdout.write(self.style.SUCCESS(f"{number} users created!"))
+        self.stdout.write(self.style.SUCCESS(f"{number} {NAME} created!"))
