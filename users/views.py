@@ -81,6 +81,11 @@ def complete_verification(request, key):
     return redirect(reverse("core:home"))
 
 
+# Github 예외처리
+class GithubException(Exception):
+    pass
+
+
 # GitHub Login
 # 1. Users are redirected to request their GitHub identity
 # 2. Users are redirected back to your site by GitHub
@@ -89,19 +94,69 @@ def github_login(request):
     # https://github.com/login/oauth/authorize?client_id={client_id}&redirect_uri={redirect_uri}&scope=read:user
     client_id = os.environ.get("GH_ID")
     redirect_uri = "http://localhost:8000/users/login/github/callback"
+    # 1. Request a user's GitHub identity
     request_url = f"https://github.com/login/oauth/authorize?client_id={client_id}&redirect_uri={redirect_uri}&scope=read:user"
     return redirect(request_url)
 
 
 # GitHub callback
 def github_callback(request):
-    client_id = os.environ.get("GH_ID")
-    client_secret = os.environ.get("GH_SECRET")
-    code = request.GET.get("code", None)
-    if code is not None:
-        callback_url = f"https://github.com/login/oauth/access_token?client_id={client_id}&client_secret={client_secret}&code={code}"
-        request = requests.post(callback_url, headers={"Accept": "application/json"},)
-        # request 확인
-        print(request.json())
-    else:
-        return redirect(reverse("core:home"))
+    try:
+        client_id = os.environ.get("GH_ID")
+        client_secret = os.environ.get("GH_SECRET")
+        code = request.GET.get("code", None)  # request.GET code 값으로 access_token 요청
+
+        if code is not None:
+            # 2. Users are reirected back to your site by GitHub
+            token_url = f"https://github.com/login/oauth/access_token?client_id={client_id}&client_secret={client_secret}&code={code}"
+            token_request = requests.post(
+                token_url, headers={"Accept": "application/json"},
+            )
+            # access_token 확인
+            token_json = token_request.json()
+            error = token_json.get("error", None)
+
+            if error is not None:
+                raise GithubException()
+            else:
+                access_token = token_json.get("access_token")
+                # 3. Use the Access token to access the API
+                profile_request = requests.get(
+                    "https://api.github.com/user",
+                    headers={
+                        "Authorization": f"token {access_token}",
+                        "Accept": "application/json",
+                    },
+                )
+                profile_json = profile_request.json()
+                username = profile_json.get("login", None)  # duplicate check user pk
+
+                if username is not None:  # username 있는 경우 login
+                    name = profile_json.get("name")
+                    email = profile_json.get("email")
+                    bio = profile_json.get("bio")
+
+                    try:  # user get에 대한 예외처리
+                        user = models.User.objects.get(email=email)
+                        if user.login_method != models.User.LOGIN_GITHUB:
+                            raise GithubException()
+                    except models.User.DoesNotExist:
+                        # Username이 있고 user 없는 경우? user 생성
+                        user = models.User.objects.create(
+                            email=email,
+                            first_name=name,
+                            username=email,
+                            bio=bio,
+                            login_method=models.User.LOGIN_GITHUB,
+                        )
+                        user.set_unusable_password()
+                        user.save()
+
+                    login(request, user)
+                    return redirect(reverse("core:home"))
+                else:  # username Exception
+                    raise GithubException()
+        else:  # code Exception
+            raise GithubException()
+    except GithubException:  # send error message
+        return redirect(reverse("users:login"))
