@@ -8,6 +8,9 @@ from django.shortcuts import redirect, reverse
 from django.contrib.auth import authenticate, login, logout
 from . import forms, models
 
+# kakao avatar File 읽기
+from django.core.files.base import ContentFile
+
 
 # class-based view
 # View -> FormView로 변경 시, get post 함수 차이
@@ -148,6 +151,7 @@ def github_callback(request):
                             username=email,
                             bio=bio,
                             login_method=models.User.LOGIN_GITHUB,
+                            email_verified=True,
                         )
                         user.set_unusable_password()
                         user.save()
@@ -159,4 +163,83 @@ def github_callback(request):
         else:  # code Exception
             raise GithubException()
     except GithubException:  # send error message
+        return redirect(reverse("users:login"))
+
+
+class KakaoException(Exception):
+    pass
+
+
+# kakao login function
+def kakao_login(request):
+    client_id = os.environ.get("KAKAO_ID")
+    redirect_uri = "http://localhost:8000/users/login/kakao/callback"
+    request_identiy = f"https://kauth.kakao.com/oauth/authorize?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code"
+    return redirect(request_identiy)
+
+
+def kakao_callback(request):
+    try:
+        code = request.GET.get("code")
+        client_id = os.environ.get("KAKAO_ID")
+        redirect_uri = "http://localhost:8000/users/login/kakao/callback"
+        access_token_url = f"https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id={client_id}&redirect_uri={redirect_uri}&code={code}"
+
+        # access_token 요청
+        token_request = requests.get(access_token_url)
+        token_json = token_request.json()
+
+        # error 처리
+        error = token_json.get("error", None)
+        if error is not None:
+            raise KakaoException()
+
+        access_token = token_json.get("access_token")
+        kakao_user_info_url = "https://kapi.kakao.com/v2/user/me"
+        # request profile
+        profile_request = requests.get(
+            kakao_user_info_url, headers={"Authorization": f"Bearer {access_token}"},
+        )
+        profile_json = profile_request.json()
+        kakao_account = profile_json.get("kakao_account", None)
+        kakao_profile = kakao_account.get("profile", None)
+        print(kakao_account)
+        # email verified check
+        has_email = kakao_account.get("has_email", None)
+
+        if has_email is True:
+
+            # user 생성시 필요한 값
+            kakao_email = kakao_account.get("email", None)
+            kakao_username = kakao_email.split("@")[0]
+            kakao_thumbnail = kakao_profile.get("thumbnail_image_url", None)
+
+            try:
+                user = models.User.objects.get(email=kakao_email)
+                if user.login_method != models.User.LOGING_KAKAO:
+                    raise KakaoException()
+
+            except models.User.DoesNotExist:
+                # email이 없는 경우 user 생성
+                user = models.User.objects.create(
+                    email=kakao_email,
+                    username=kakao_email,
+                    first_name=kakao_username,
+                    login_method=models.User.LOGING_KAKAO,
+                    email_verified=True,
+                )
+                user.set_unusable_password()
+                user.save()
+                if kakao_thumbnail is not None:
+                    photo_request = requests.get(kakao_thumbnail)
+                    user.avatar.save(
+                        # username이 한글일 수도 있으니 email의 로컬파트를 사용
+                        f"{kakao_username}-avatar.png",
+                        ContentFile(photo_request.content),
+                    )
+        # user login 처리
+        login(request, user)
+        return redirect(reverse("core:home"))
+
+    except KakaoException:
         return redirect(reverse("users:login"))
