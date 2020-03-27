@@ -232,9 +232,10 @@ def kakao_callback(request):
                 user.save()
                 if kakao_thumbnail is not None:
                     photo_request = requests.get(kakao_thumbnail)
+                    # user를 따로 save할 필요 없음
                     user.avatar.save(
                         # username이 한글일 수도 있으니 email의 로컬파트를 사용
-                        f"{kakao_username}-avatar.png",
+                        f"{kakao_username}-avatar",
                         ContentFile(photo_request.content),
                     )
         # user login 처리
