@@ -133,6 +133,9 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 
+# CSS
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+
 # Django의 User를 custom 해서 사용하기 위한 설정
 AUTH_USER_MODEL = "users.User"
 

@@ -136,3 +136,4 @@ dmypy.json
 
 # image
 uploads/
+node_modules/
