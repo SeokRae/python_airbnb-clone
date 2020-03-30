@@ -15,8 +15,8 @@ class HomeView(ListView):
     model = models.Room
 
     # pagination option 설정
-    paginate_by = 10
-    paginate_orphans = 3
+    paginate_by = 12
+    paginate_orphans = 4
     ordering = "created"
 
     context_object_name = "rooms"

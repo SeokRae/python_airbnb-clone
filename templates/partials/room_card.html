@@ -1,6 +1,20 @@
 <div class="w-1/4 mb-10 px-2">
     
     <!-- print room photo -->
-    <div class="w-full h-64 bg-cover bg-center rounded-lg " style="background-image: url({{room.first_photo}});"></div>
+    <div class="w-full h-64 bg-cover bg-center rounded-lg mb-2" style="background-image: url({{room.first_photo}});"></div>
+    <!-- print room detail -->
+    <div class="flex justify-between">
+        <!-- superhost, city name -->
+        <div>
+            {% if room.host.superhost %}
+            <span class="uppercase font-medium text-xs border border-black text-black rounded py-px px-1">superhost</span>
+            {% endif %}
+            <span class="text-sm text-gray-600">{{room.city}}</span>
+        </div>
+        <!-- total_rating -->
+        <span class="text-sm flex items-center">
+            <i class="fas fa-star text-red-500 text-xs mr-1"></i> {{room.total_rating}}
+        </span>
+    </div>
 
 </div>
