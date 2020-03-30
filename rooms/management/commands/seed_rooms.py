@@ -52,8 +52,9 @@ class Command(BaseCommand):
         # number에 해당하는 room의 개수
         for pk in created_clean:
             room = room_models.Room.objects.get(pk=pk)
+
             # 랜덤한 photo 수 대입
-            for i in range(3, random.randint(3, 14)):
+            for i in range(3, random.randint(4, 14)):
                 room_models.Photo.objects.create(
                     # caption에 해당하는 데이터를 sentence로 채움
                     caption=seeder.faker.sentence(),
@@ -84,6 +85,9 @@ class Command(BaseCommand):
             )
             self.stdout.write(
                 self.style.SUCCESS(f"{room.house_rules.count()} apply house_rule room!")
+            )
+            self.stdout.write(
+                self.style.SUCCESS(f"{room.photos.all().count()} apply photos Room")
             )
             self.stdout.write(self.style.SUCCESS(f" * create {room.name} room"))
         self.stdout.write(self.style.SUCCESS(f"{number} {NAME} created!"))
