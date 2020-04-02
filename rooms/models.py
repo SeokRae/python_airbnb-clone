@@ -112,6 +112,19 @@ class Room(core_models.TimeStampedModel):
             return round(all_ratings / len(all_reviews), 2)
         return 0
 
+    # room list, room detail
     def first_photo(self):
         (photo,) = self.photos.all()[:1]
         return photo.file.url
+
+    # room detail
+    def get_next_four_photos(self):
+        photos = self.photos.all()[1:5]
+        return photos
+
+    # room detail
+    def get_beds(self):
+        if self.beds == 1:
+            return "1 bed"
+        else:
+            return f"{self.beds} beds"

@@ -92,4 +92,12 @@ form {
   }
 }
 
+// room.detail image scale up
+.grid-img {
+  transition: transform 0.5s ease-in-out;
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
 @tailwind utilities;
