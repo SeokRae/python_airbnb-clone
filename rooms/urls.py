@@ -5,6 +5,6 @@ app_name = "rooms"
 
 # def _path(route, view, kwargs=None, name=None, Pattern=None):
 urlpatterns = [
-    path("<int:pk>", views.RoomDetail.as_view(), name="detail"),
+    path("<int:pk>/", views.RoomDetail.as_view(), name="detail"),
     path("search/", views.SearchView.as_view(), name="search"),
 ]

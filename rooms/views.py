@@ -60,6 +60,7 @@ class SearchView(View):
                 superhost = form.cleaned_data.get("superhost")
                 amenities = form.cleaned_data.get("amenities")  # QuerySet
                 facilities = form.cleaned_data.get("facilities")  # QuerySet
+                house_rules = form.cleaned_data.get("house_rules")  # house_rules
 
                 filter_args = {}
 
@@ -99,6 +100,9 @@ class SearchView(View):
 
                 for facility in facilities:
                     qs = qs.filter(facilities=facility)
+
+                for house_rule in house_rules:
+                    qs = qs.filter(house_rules=house_rule)
 
                 paginator = Paginator(qs, 5, orphans=2)
                 page = request.GET.get("page", 1)

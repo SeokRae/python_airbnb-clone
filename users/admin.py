@@ -35,6 +35,7 @@ class CustomUserAdmin(UserAdmin):
                     "language",
                     "currency",
                     "superhost",
+                    "email_secret",
                     "login_method",
                 )
             },
