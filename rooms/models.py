@@ -114,8 +114,11 @@ class Room(core_models.TimeStampedModel):
 
     # room list, room detail
     def first_photo(self):
-        (photo,) = self.photos.all()[:1]
-        return photo.file.url
+        try:
+            (photo,) = self.photos.all()[:1]
+            return photo.file.url
+        except ValueError:
+            return None
 
     # room detail
     def get_next_four_photos(self):

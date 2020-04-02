@@ -18,6 +18,9 @@ from django.contrib import messages
 # profile Success
 from django.contrib.messages.views import SuccessMessageMixin
 
+# auth
+from django.contrib.auth.decorators import login_required
+
 
 # class-based view
 # View -> FormView로 변경 시, get post 함수 차이
@@ -338,3 +341,13 @@ class UpdatePasswordView(
     # redirect
     def get_success_url(self):
         return self.request.user.get_absolute_url()
+
+
+# 호스팅 관리
+@login_required
+def switch_hosting(request):
+    try:
+        del request.session["is_hosting"]
+    except KeyError:
+        request.session["is_hosting"] = True
+    return redirect(reverse("core:home"))
