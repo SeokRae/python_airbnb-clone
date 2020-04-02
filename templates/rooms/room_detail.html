@@ -7,11 +7,12 @@
 {% block content %}
     <div class="-mt-5 container max-w-full h-75vh flex mb-20">
         
+        
         {% if room.photos.count == 1 %}
             <div class="h-full w-full bg-center bg-cover grid-img" style="background-image:url({{room.first_photo}})"></div>    
         {% else %} 
 
-            {% if room.photos.count > 1 %} <!-- 이미지 3개 이상 -->
+            {% if room.photos.count > 2 %} <!-- 이미지 3개 이상 -->
         
                 <div class="h-full w-1/2 bg-center bg-cover grid-img" style="background-image:url({{room.first_photo}})"></div>
                 <div class="h-full w-1/2 flex flex-wrap">
