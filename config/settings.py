@@ -57,6 +57,7 @@ PROJECT_APPS = [
 
 CUSTOM_APPS = []
 
+# Third party를 installed_app
 INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS
 
 MIDDLEWARE = [

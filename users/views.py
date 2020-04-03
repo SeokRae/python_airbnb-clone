@@ -298,6 +298,7 @@ class UpdateProfileView(mixins.LoggedInOnlyView, SuccessMessageMixin, UpdateView
         "last_name",
         "gender",
         "bio",
+        "avatar",
         "birthdate",
         "language",
         "currency",
