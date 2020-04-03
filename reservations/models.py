@@ -2,9 +2,7 @@ from django.db import models
 from django.utils import timezone
 from core import models as core_models
 
-#
 import datetime
-
 
 # Create your models here.
 
@@ -59,7 +57,11 @@ class Reservation(core_models.TimeStampedModel):
 
     def is_finished(self):
         now = timezone.now().date()
-        return now > self.check_out
+        is_finished = now > self.check_out
+        # 일정 끝나면 DB에서 삭제
+        if is_finished:
+            BookedDay.objects.filter(reservation=self).delete()
+        return is_finished
 
     is_finished.boolean = True
 

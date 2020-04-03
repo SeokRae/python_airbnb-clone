@@ -44,12 +44,13 @@ class Calendar(calendar.Calendar):
                 today = now.day
                 month = now.month
                 past = False
+
                 if month == self.month:
                     if day <= today:
                         past = True
-                new_day = Day(number=day, past=past, month=self.month, year=self.year)
-                days.append(new_day)
 
+                new_day = Day(number=day, past=past, month=self.month, year=self.year,)
+                days.append(new_day)
         return days
 
     def get_month(self):

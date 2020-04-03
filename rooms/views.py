@@ -14,6 +14,9 @@ from django.contrib import messages
 # success Message mixins
 from django.contrib.messages.views import SuccessMessageMixin
 
+# extra
+from reservations.models import Reservation
+
 # Create your views here.
 
 
@@ -43,6 +46,20 @@ class RoomDetail(DetailView):
     """ RoomDetail Definition """
 
     model = models.Room
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        guest_reservation = Reservation.objects.filter(
+            guest=self.request.user, status=Reservation.STATUS_CONFIRMED
+        )
+        r_date = set()
+
+        for r in guest_reservation:
+            r_date.add(r.check_in.strftime("%Y-%m-%d"))
+            r_date.add(r.check_out.strftime("%Y-%m-%d"))
+
+        context["reservation_date"] = r_date
+        return context
 
 
 # class-based View

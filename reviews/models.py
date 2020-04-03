@@ -1,25 +1,36 @@
 from django.db import models
 from core import models as core_models
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 # Create your models here.
 
 
 class Review(core_models.TimeStampedModel):
+    class Meta:
+        ordering = ("-created",)
 
     """ Review Model Definition """
 
     review = models.TextField()
-    accuracy = models.IntegerField(default=0)
-    communication = models.IntegerField(default=0)
-    cleanliness = models.IntegerField(default=0)
-    location = models.IntegerField(default=0)
-    check_in = models.IntegerField(default=0)
-    value = models.IntegerField(default=0)
-    # 유저 삭제 시 숙소도 삭제
+    accuracy = models.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(5)]
+    )
+    communication = models.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(5)]
+    )
+    cleanliness = models.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(5)]
+    )
+    location = models.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(5)]
+    )
+    check_in = models.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(5)]
+    )
+    value = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
     user = models.ForeignKey(
         "users.User", related_name="reviews", on_delete=models.CASCADE
     )
-    # 숙소 삭제 시 하위 테이블 데이터도 삭제
     room = models.ForeignKey(
         "rooms.Room", related_name="reviews", on_delete=models.CASCADE
     )
