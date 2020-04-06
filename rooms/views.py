@@ -47,20 +47,6 @@ class RoomDetail(DetailView):
 
     model = models.Room
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        guest_reservation = Reservation.objects.filter(
-            guest=self.request.user, status=Reservation.STATUS_CONFIRMED
-        )
-        r_date = set()
-
-        for r in guest_reservation:
-            r_date.add(r.check_in.strftime("%Y-%m-%d"))
-            r_date.add(r.check_out.strftime("%Y-%m-%d"))
-
-        context["reservation_date"] = r_date
-        return context
-
 
 # class-based View
 class SearchView(View):

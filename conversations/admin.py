@@ -11,6 +11,8 @@ class MessageAdmin(admin.ModelAdmin):
 
     list_display = ("__str__", "created")
 
+    raw_id_fields = ("conversation", "user")
+
 
 @admin.register(models.Conversation)
 class ConversationAdmin(admin.ModelAdmin):
@@ -18,3 +20,5 @@ class ConversationAdmin(admin.ModelAdmin):
     """ Conversation Admin Definition """
 
     list_display = ("__str__", "count_messages", "count_participants")
+
+    raw_id_fields = ("participants",)

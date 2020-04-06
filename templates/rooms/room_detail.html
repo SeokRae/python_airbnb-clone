@@ -33,7 +33,6 @@
             
         {% endif %}
         
-        
     </div>
 
     <div class="container mx-auto flex justify-around pb-56">
@@ -48,12 +47,17 @@
                     <span class="mt-2 text-gray-500">{{room.host.first_name}}</span>
                 </a>
             </div>
-            {% on_favs room as on_favs_boolean %}
-            {% if on_favs_boolean %}
-                <a class="block mb-10 w-2/6 text-teal-600 font-bold" href="{% url 'lists:toggle-room' room.pk %}?action=remove"><i class="fas fa-heart text-red-700"></i> {% trans "Remove from Favourites" %}</a>
-            {% else %}  
-                <a class="block mb-10 w-2/6 text-teal-600 font-bold" href="{% url 'lists:toggle-room' room.pk %}?action=add"><i class="far fa-heart text-gray-400"></i> {% trans "Save to Favourites" %}</a>
+            
+            
+            {% if not user.is_anonymous %}
+                {% on_favs room as on_favs_boolean %}
+                {% if on_favs_boolean %}
+                    <a class="block mb-10 w-2/6 text-teal-600 font-bold" href="{% url 'lists:toggle-room' room.pk %}?action=remove"><i class="fas fa-heart text-red-700"></i> {% trans "Remove from Favourites" %}</a>
+                {% else %}  
+                    <a class="block mb-10 w-2/6 text-teal-600 font-bold" href="{% url 'lists:toggle-room' room.pk %}?action=add"><i class="far fa-heart text-gray-400"></i> {% trans "Save to Favourites" %}</a>
+                {% endif %}
             {% endif %}
+                
             <div class="flex border-section">
                 <span class="mr-5 font-light">{{room.room_type}}</span>
                 <span class="mr-5 font-light">{{room.beds}} bed{{room.beds|pluralize}}</span>
@@ -119,55 +123,53 @@
             </div>
         </div>
         <div class="w-1/3">
-            {{reservation_date}}
-            {% if room.host == user %}
-                <a href="{% url 'rooms:edit' room.pk %}" class="btn-link block">Edit Room</a>
-            {% else %}
-                <!-- not hosting -->
-                {% if not request.session.is_hosting %}
+            {% if not user.is_anonymous %}
 
-                    {% for calendar in room.get_calendars %}
-                    <div class="mb-20">
-                        <span class="text-center font-semibold text-lg block mb-8">{{calendar.get_month}} / {{calendar.year}}</span>
-                        <!-- calendar header -->
-                        <div class="cal-grid font-medium mb-4">
-                            {% for day in calendar.day_names  %}
-                                <span>{{day}}</span>
-                            {% endfor %}
-                        </div>
-                        <!-- calendar days -->
-                        <div class="cal-grid">
-                            {% for day in calendar.get_days %}
-                                    
-                                <!-- 예약된 날짜 확인 -->
-                                {% is_booked room day as is_booked_bool %}
-                                {% if day.number != 0 %}
-                                    {% if day.past %}
-                                        <span class="cal-number bg-gray-200 text-gray-400">{{day}}</span>
+                {% if room.host == user %}
+                    <a href="{% url 'rooms:edit' room.pk %}" class="btn-link block">Edit Room</a>
+                {% else %}
+                    <!-- not hosting -->
+                    {% if not request.session.is_hosting %}
+
+                        {% for calendar in room.get_calendars %}
+                        <div class="mb-20">
+                            <span class="text-center font-semibold text-lg block mb-8">{{calendar.get_month}} / {{calendar.year}}</span>
+                            <!-- calendar header -->
+                            <div class="cal-grid font-medium mb-4">
+                                {% for day in calendar.day_names  %}
+                                    <span>{{day}}</span>
+                                {% endfor %}
+                            </div>
+                            <!-- calendar days -->
+                            <div class="cal-grid">
+                                {% for day in calendar.get_days %}
                                         
-                                    {% elif is_booked_bool %}
-                                    
-                                        <span class="cal-number bg-gray-200 text-gray-400 line-through">{{day}}</span>
+                                    <!-- 예약된 날짜 확인 -->
+                                    {% is_booked room day as is_booked_bool %}
+                                    {% if day.number != 0 %}
+                                        {% if day.past %}
+                                            <span class="cal-number bg-gray-200 text-gray-400">{{day}}</span>
+                                            
+                                        {% elif is_booked_bool %}
                                         
-                                    <!-- {% elif is_booked_bool %}
-
-                                        <a href="{% url 'reservations:detail' room.pk day.year day.month day.number %}" class="cal-number bg-gray-200 text-gray-700 hover:bg-teal-400 hover:text-white hover:font-medium">{{day}}</a> -->
-
+                                            <span class="cal-number bg-gray-200 text-gray-400 line-through">{{day}}</span>
+                                        {% else %}
+                                            <a href="{% url 'reservations:create' room.pk day.year day.month day.number %}" class="cal-number bg-gray-200 text-gray-700 hover:bg-teal-400 hover:text-white hover:font-medium">{{day}}</a>
+                                        {% endif %}
                                     {% else %}
-                                        <a href="{% url 'reservations:create' room.pk day.year day.month day.number %}" class="cal-number bg-gray-200 text-gray-700 hover:bg-teal-400 hover:text-white hover:font-medium">{{day}}</a>
+                                    <span></span>
                                     {% endif %}
-                                {% else %}
-                                  <span></span>
-                                {% endif %}
-                            {% endfor %}
+                                {% endfor %}
+                            </div>
                         </div>
-                    </div>
 
-                    {% endfor %}
+                        {% endfor %}
 
+                    {% endif %}
                 {% endif %}
             {% endif %}
         </div>
+    </div>
     </div>
 
 {% endblock content %}  
