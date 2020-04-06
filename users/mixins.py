@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.urls import reverse_lazy
 from django.shortcuts import redirect
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
+from django.utils.translation import gettext_lazy as _
 
 
 # email 로그인이 아닌 계정에 대한 페이지 권한 관리 (password change)
@@ -20,7 +21,7 @@ class LoggedOutOnlyView(UserPassesTestMixin):
         return not self.request.user.is_authenticated
 
     def handle_no_permission(self):
-        messages.error(self.request, "Can't go there")
+        messages.error(self.request, _("Can't go there"))
         return redirect("core:home")
 
 
