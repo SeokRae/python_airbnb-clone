@@ -68,7 +68,6 @@ class SearchView(View):
 
     # function-based search view
     def get(self, request):
-
         country = request.GET.get("country")
 
         if country:

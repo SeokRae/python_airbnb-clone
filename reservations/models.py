@@ -10,7 +10,9 @@ import datetime
 class BookedDay(core_models.TimeStampedModel):
 
     day = models.DateField()
-    reservation = models.ForeignKey("Reservation", on_delete=models.CASCADE)
+    reservation = models.ForeignKey(
+        "Reservation", related_name="booked_day", on_delete=models.CASCADE
+    )
 
     class Meta:
         verbose_name = "Booked Day"
@@ -70,6 +72,7 @@ class Reservation(core_models.TimeStampedModel):
             start = self.check_in
             end = self.check_out
             difference = end - start
+
             existing_booked_day = BookedDay.objects.filter(
                 day__range=(start, end)
             ).exists()
