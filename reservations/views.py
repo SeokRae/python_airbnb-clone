@@ -1,9 +1,10 @@
 from django.http import Http404
 import datetime
-from django.views.generic import View
+from django.views.generic import View, ListView
 from django.contrib import messages
 from django.shortcuts import render, redirect, reverse
 from rooms import models as room_models
+from users import models as user_models
 from . import models
 
 # review
@@ -83,3 +84,63 @@ def edit_reservation(request, pk, verb):
     messages.success(request, f"Reservation {reservation.status}")
 
     return redirect(reverse("reservations:detail", kwargs={"pk": reservation.pk}))
+
+
+class SeeReservationsView(ListView):
+
+    """ See Reservations View Definition """
+
+    user = user_models.User
+    template_name = "reservations/see_reservations.html"
+
+    def get(self, *args, **kwargs):
+        user = self.request.user
+        reservations = models.Reservation.objects.filter(guest__pk=user.pk).order_by(
+            "-created"
+        )
+        if not reservations.count() == 0:
+            return render(
+                self.request,
+                "reservations/see_reservations.html",
+                context={
+                    "reservations": reservations,
+                    "exist": True,
+                    "cur_page": "reservations",
+                },
+            )
+        else:
+            return render(
+                self.request,
+                "reservations/see_reservations.html",
+                context={"exist": False, "cur_page": "reservations"},
+            )
+
+
+class SeeHostRoomsReservations(ListView):
+
+    """ See Host Rooms Reservations View Definition """
+
+    model = user_models.User
+    template_name = "reservations/see_reservations.html"
+
+    def get(self, *args, **kwargs):
+        host = self.request.user
+        reservations = models.Reservation.objects.filter(
+            room__host__pk=host.pk
+        ).order_by("-created")
+        if not reservations.count() == 0:
+            return render(
+                self.request,
+                "reservations/see_reservations.html",
+                context={
+                    "reservations": reservations,
+                    "exist": True,
+                    "cur_page": "reservations-host",
+                },
+            )
+        else:
+            return render(
+                self.request,
+                "reservations/see_reservations.html",
+                context={"exist": False, "cur_page": "reservations-host"},
+            )

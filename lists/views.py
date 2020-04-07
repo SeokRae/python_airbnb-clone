@@ -1,7 +1,7 @@
 from django.shortcuts import redirect, reverse
-from rooms import models as room_models
-from . import models
 from django.views.generic import TemplateView
+from . import models
+from rooms import models as room_models
 
 # Create your views here.
 
@@ -23,4 +23,4 @@ def toggle_room(request, room_pk):
 
 class SeeFavsView(TemplateView):
 
-    template_name = "lists/list_detail.html"
+    template_name = "lists/fav_lists.html"

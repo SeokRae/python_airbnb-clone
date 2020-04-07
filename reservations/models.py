@@ -84,3 +84,9 @@ class Reservation(core_models.TimeStampedModel):
                     BookedDay.objects.create(day=day, reservation=self)
                 return
         return super().save(*args, **kwargs)
+
+    def get_total_price(self):
+        start = self.check_in
+        end = self.check_out
+        difference = end - start
+        return difference.days * self.room.price

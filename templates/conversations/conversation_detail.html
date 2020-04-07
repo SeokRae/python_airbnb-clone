@@ -9,7 +9,7 @@
 
 {% block content %}
 
-    <div class="container mx-auto my-10 mt-32 flex justify-between min-h-50vh">
+    <div class="container mx-auto my-10 mt-32 flex justify-between min-h-50vh h-full">
 
         <div class="border w-1/4 p-10">
             <span class="text-center w-full block text-lg font-medium">Conversation between:</span>
@@ -25,31 +25,34 @@
                 {% endfor %}
             </div>
         </div>
-
-        <div class="flex-grow">
-            <div class="border  ml-10 p-10 flex flex-col">
-                {% if conversation.messages.count == 0 %}
-                    no messages
-                {% else %}
-                    {% for message in conversation.messages.all  %}
-                        <div class="mb-10 {% if message.user.pk == user.pk %}
-                            self-end
-                            text-right
-                        {% endif %}">
-                            <span class="text-sm font-medium text-gray-600">{{message.user.first_name}}</span>
-                            <div class="mt-px p-5 w-56 rounded
-                                {% if message.user.pk != user.pk %}
-                                    bg-teal-500
-                                    text-white
-                                {% else %}
-                                    bg-gray-300
-                                {% endif %}
-                            ">
-                                {{message.message}}
+        
+        <div class="w-3/4 h-75vh" >
+            <div class="h-65vh border ml-10 p-10 overflow-auto">
+                <div class="flex flex-col">
+                    {% if conversation.messages.count == 0 %}
+                        no messages
+                    {% else %}
+                        {% for message in conversation.messages.all  %}
+                            <div class="mb-10 {% if message.user.pk == user.pk %}
+                                self-end
+                                text-right
+                            {% endif %}">
+                                <span class="text-sm font-medium text-gray-600"> {{message.user.first_name}}</span>
+                                <div class="mt-px p-5 w-56 rounded
+                                    {% if message.user.pk != user.pk %}
+                                        bg-teal-500
+                                        text-white
+                                    {% else %}
+                                        bg-gray-300
+                                    {% endif %}
+                                ">
+                                    {{message.message}}
+                                </div>
+                                <span class="text-sm font-medium text-gray-600">{{message.created|date:"Y M d D"}} {{message.created|time:"H:i"}}</span>
                             </div>
-                        </div>
-                    {% endfor %}
-                {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </div>
             </div>
             <!-- input form -->
             <form class="mt-10 w-3/4 mx-auto flex" method="POST">
@@ -57,6 +60,7 @@
                 <input class="border-box" name="message" placeholder="Write a Message" required />
                 <button class="btn-link w-1/4 ml-4">Send Comment</button>
             </form>
+
         </div>
     </div>
 {% endblock content %} 

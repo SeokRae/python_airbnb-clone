@@ -1,6 +1,8 @@
 from django.db import models
 from core import models as core_models
 
+from django.urls import reverse
+
 # Create your models here.
 
 
@@ -29,6 +31,9 @@ class Conversation(core_models.TimeStampedModel):
         return self.participants.count()
 
     count_participants.short_description = "Number of Participants"
+
+    def get_absolute_url(self):
+        return reverse("conversations:detail", kwargs={"pk": self.pk})
 
 
 class Message(core_models.TimeStampedModel):
