@@ -20,6 +20,11 @@ from django.conf import settings
 # static 파일 제공 모듈
 from django.conf.urls.static import static
 
+
+def trigger_error(request):
+    division_by_zero = 1 / 0
+
+
 # core에서 app의 urls 관리할 수 있도록 core.urls 추가
 urlpatterns = [
     path("", include("core.urls", namespace="core")),
@@ -30,6 +35,7 @@ urlpatterns = [
     path("lists/", include("lists.urls", namespace="lists")),
     path("conversations/", include("conversations.urls", namespace="conversations")),
     path("admin/", admin.site.urls),
+    path("sentry-debug/", trigger_error),
 ]
 
 # 개발 모드 or 프로덕션 모드인지 체크하여 URL Mapping
