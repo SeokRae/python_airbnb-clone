@@ -16,6 +16,7 @@ def go_conversation(request, host_pk, guest_pk):
             conversation = models.Conversation.objects.get(
                 Q(participants=host) & Q(participants=guest)
             )
+            print(conversation)
         except models.Conversation.DoesNotExist:
             conversation = models.Conversation.objects.create()
             conversation.participants.add(host, guest)

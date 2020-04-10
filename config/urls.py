@@ -21,21 +21,30 @@ from django.conf import settings
 # static 파일 제공 모듈
 from django.conf.urls.static import static
 
-
+# Server Error check Trigger
 def trigger_error(request):
     division_by_zero = 1 / 0
 
 
 # core에서 app의 urls 관리할 수 있도록 core.urls 추가
 urlpatterns = [
+    # main home page url mapping
     path("", include("core.urls", namespace="core")),
+    # room category url mapping
     path("rooms/", include("rooms.urls", namespace="rooms")),
+    # user category url mapping
     path("users/", include("users.urls", namespace="users")),
+    # reservation category url mapping
     path("reservations/", include("reservations.urls", namespace="reservations")),
+    # review category url mapping
     path("reviews/", include("reviews.urls", namespace="reviews")),
+    # favorite room list category url mapping
     path("lists/", include("lists.urls", namespace="lists")),
+    # conversation between users category url mapping
     path("conversations/", include("conversations.urls", namespace="conversations")),
+    # admin page category url mapping
     path(os.environ.get("DJANGO_ADMIN"), admin.site.urls),
+    # error check url mapping
     path("sentry-debug/", trigger_error),
 ]
 
