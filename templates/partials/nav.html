@@ -16,7 +16,7 @@
             <li class="nav_link"><a href="{% url 'rooms:create' %}">{% trans "Create Room" %}</a></li>
         {% endif %}
         <li class="nav_link"><a href="{% url 'lists:see-favs' %}">{% trans "Favs" %} {{user.lists.rooms.count}}</a></li>
-        <li class="nav_link"><a href="{{user.get_absolute_url}}">{% trans "Profile" %}</a></li>
+        <li class="nav_link"><a href="{{user.get_absolute_url}}">{{user.first_name}}'s {% trans "Profile" %}</a></li>
         <li class="nav_link"><a href="{% url "users:logout" %}">{% trans "Log out" %}</a></li>
     {% else %}
         <li class="nav_link"><a href="{% url "users:login" %}">{% trans "Log in" %}</a></li>

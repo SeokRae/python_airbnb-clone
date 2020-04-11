@@ -34,41 +34,42 @@
                 </div>
 
                 {% for reservation in reservations %}
-                <div class="mt-1 flex flex-row border-b border-gray-400 py-3">
-                    <div class="w-2/12 pl-3 text-m font-medium {% if reservation.status == 'pending' %} text-orange-500 {% elif reservation.status == 'confirmed' %} text-teal-700 {% else %} text-red-600 {% endif %}">{{reservation.status}}</div>
-                    <div class="w-4/12 pl-3 flex flex-col font-medium text-sm ">
-                        <span class="text-gray-700">{{reservation.check_in | date:'M d'}} - {{reservation.check_out | date:'M d, Y'}}</span>
-                        <a href="{% url 'rooms:detail' reservation.room.pk %}" class="text-teal-600">{{reservation.room.name}}</a>
-                        <span class="text-gray-700">{{reservation.room.address}}</span>
-                        <span class="text-gray-700">{{reservation.room.city}}, {{reservation.room.country.name}}</span>
-                    </div> 
-                    
-                    <div class="pl-3 flex flex-row w-3/12">
-                        {% if cur_page == "reservations" %}
-                            <div>
-                            {% include "mixins/user_avatar.html" with user=reservation.room.host h_and_w='h-12 w-12' text='text-lg'%}
-                            </div>
-                            <div class="flex flex-col ml-4 font-medium text-m text-gray-700">
-                                <span>{{reservation.room.host.first_name}} {{reservation.room.host.last_name}}</span>
-                                <a href="{% url 'conversations:go' reservation.room.host.pk reservation.guest.pk%}">
-                                    <i class="fas fa-envelope text-teal-500 mr-1"></i>Send Message</a>
-                            </div>
-                        {% elif cur_page == "reservations-host" %}
-                            <div>
-                            {% include "mixins/user_avatar.html" with user=reservation.guest h_and_w='h-12 w-12' text='text-lg'%}
-                            </div>
-                            <div class="flex flex-col ml-4 font-medium text-m text-gray-700">
-                                <span>{{reservation.guest.first_name}} {{reservation.guest.last_name}}</span>
-                                <a href="{% url 'conversations:go' reservation.room.host.pk reservation.guest.pk%}">
-                                    <i class="fas fa-envelope text-teal-500 mr-1"></i>Send Message</a>
-                            </div>
-                        {% endif %}
+                    <div class="mt-1 flex flex-row border-b border-gray-400 py-3">
+                        <div class="w-2/12 pl-3 text-m font-medium {% if reservation.status == 'pending' %} text-orange-500 {% elif reservation.status == 'confirmed' %} text-teal-700 {% else %} text-red-600 {% endif %}">{{reservation.status}}</div>
+                        <div class="w-4/12 pl-3 flex flex-col font-medium text-sm ">
+                            <span class="text-gray-700">{{reservation.check_in | date:'M d'}} - {{reservation.check_out | date:'M d, Y'}}</span>
+                            <a href="{% url 'rooms:detail' reservation.room.pk %}" class="text-teal-600">{{reservation.room.name}}</a>
+                            <span class="text-gray-700">{{reservation.room.address}}</span>
+                            <span class="text-gray-700">{{reservation.room.city}}, {{reservation.room.country.name}}</span>
+                        </div> 
+                        
+                        <div class="pl-3 flex flex-row w-3/12">
+                            {% if cur_page == "reservations" %}
+                                <div>
+                                {% include "mixins/user_avatar.html" with user=reservation.room.host h_and_w='h-12 w-12' text='text-lg'%}
+                                </div>
+                                <div class="flex flex-col ml-4 font-medium text-m text-gray-700">
+                                    <span>{{reservation.room.host.first_name}} {{reservation.room.host.last_name}}</span>
+                                    <a href="{% url 'conversations:go' reservation.room.host.pk reservation.guest.pk %}">
+                                        <i class="fas fa-envelope text-teal-500 mr-1"></i>Send Message
+                                    </a>
+                                </div>
+                            {% elif cur_page == "reservations-host" %}
+                                <div>
+                                {% include "mixins/user_avatar.html" with user=reservation.guest h_and_w='h-12 w-12' text='text-lg'%}
+                                </div>
+                                <div class="flex flex-col ml-4 font-medium text-m text-gray-700">
+                                    <span>{{reservation.guest.first_name}} {{reservation.guest.last_name}}</span>
+                                    <a href="{% url 'conversations:go' reservation.room.host.pk reservation.guest.pk %}">
+                                        <i class="fas fa-envelope text-teal-500 mr-1"></i>Send Message</a>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="pl-3 font-medium text-m flex flex-col ">
+                            <span class="text-gray-700">Price ${{reservation.get_total_price}}</span>
+                            <a href="{% url 'reservations:detail' reservation.pk %}" class="text-teal-600">Change or Cancel</a>
+                        </div>
                     </div>
-                    <div class="pl-3 font-medium text-m flex flex-col ">
-                        <span class="text-gray-700">Price ${{reservation.get_total_price}}</span>
-                        <a href="{% url 'reservations:detail' reservation.pk %}" class="text-teal-600">Change or Cancel</a>
-                    </div>
-                </div>
                 {% endfor %}
 
             {% endif %}

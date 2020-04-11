@@ -128,6 +128,7 @@ class SeeHostRoomsReservations(ListView):
         reservations = models.Reservation.objects.filter(
             room__host__pk=host.pk
         ).order_by("-created")
+
         if not reservations.count() == 0:
             return render(
                 self.request,
