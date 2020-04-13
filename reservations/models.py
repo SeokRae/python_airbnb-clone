@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from core import models as core_models
+from django.urls import reverse
 
 import datetime
 
@@ -50,6 +51,14 @@ class Reservation(core_models.TimeStampedModel):
 
     def __str__(self):
         return f"{self.room} - {self.check_in}"
+
+    def get_host(self):
+        return f"{self.room.host}"
+
+    get_host.short_description = "host"
+
+    def get_absolute_url(self):
+        return reverse("reservations:detail", kwargs={"pk": self.pk})
 
     def in_progress(self):
         now = timezone.now().date()

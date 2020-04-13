@@ -51,16 +51,17 @@ class Command(BaseCommand):
         # reservation 생성시 check_in ~ check_out 기간 내에 bookedday 만들기
         for pk in clean_reservations:
             reservation = revservation_models.Reservation.objects.get_or_none(pk=pk)
+            start = reservation.check_in
+            end = reservation.check_out
+            diff = end - start
 
-            delta = reservation.check_out - reservation.check_in
+            # reservation의 check_in ~ check_out의 range를 없으면 생성
+            for i in range(diff.days + 1):
+                day = start + timedelta(days=i)
 
-            for i in range(delta.days + 1):
-                day = reservation.check_in + timedelta(days=i)
-                reservation_models.BookedDay.objects.create(
+                bookedday = reservation_models.BookedDay.objects.create(
                     reservation=reservation, day=day
                 )
-                self.stdout.write(
-                    self.style.SUCCESS(f"{clean_reservations} {day} booked_day created")
-                )
+                self.stdout.write(self.style.SUCCESS(f"{bookedday} booked_day created"))
 
         self.stdout.write(self.style.SUCCESS(f"{number} {NAME} created"))

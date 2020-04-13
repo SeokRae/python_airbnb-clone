@@ -50,7 +50,7 @@
                                 </div>
                                 <div class="flex flex-col ml-4 font-medium text-m text-gray-700">
                                     <span>{{reservation.room.host.first_name}} {{reservation.room.host.last_name}}</span>
-                                    <a href="{% url 'conversations:go' reservation.room.host.pk reservation.guest.pk %}">
+                                    <a href="{% url 'conversations:go' reservation.pk reservation.room.host.pk reservation.guest.pk %}">
                                         <i class="fas fa-envelope text-teal-500 mr-1"></i>Send Message
                                     </a>
                                 </div>
@@ -60,8 +60,9 @@
                                 </div>
                                 <div class="flex flex-col ml-4 font-medium text-m text-gray-700">
                                     <span>{{reservation.guest.first_name}} {{reservation.guest.last_name}}</span>
-                                    <a href="{% url 'conversations:go' reservation.room.host.pk reservation.guest.pk %}">
-                                        <i class="fas fa-envelope text-teal-500 mr-1"></i>Send Message</a>
+                                    <a href="{% url 'conversations:go' reservation.pk reservation.room.host.pk reservation.guest.pk %}">
+                                        <i class="fas fa-envelope text-teal-500 mr-1"></i>Send Message
+                                    </a>
                                 </div>
                             {% endif %}
                         </div>

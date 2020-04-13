@@ -9,6 +9,12 @@ class Conversation(core_models.TimeStampedModel):
 
     """ Conversation Model Definition """
 
+    reservations = models.ForeignKey(
+        "reservations.Reservation",
+        related_name="conversations",
+        on_delete=models.CASCADE,
+    )
+
     # Conversation에 참여하는 사용자 Many To Many 필드
     participants = models.ManyToManyField(
         "users.User", related_name="conversations", blank=True
@@ -41,7 +47,7 @@ class Message(core_models.TimeStampedModel):
 
     message = models.TextField()
     user = models.ForeignKey(
-        "users.User", related_name="messages", on_delete=models.CASCADE
+        "users.User", related_name="messages", on_delete=models.CASCADE, null=True
     )
     conversation = models.ForeignKey(
         "Conversation", related_name="messages", on_delete=models.CASCADE

@@ -23,8 +23,8 @@ def create(request, room, year, month, day):
         date_obj = datetime.datetime(year, month, day)
         room = room_models.Room.objects.get(pk=room)
         booked = models.BookedDay.objects.get(day=date_obj, reservation__room=room)
-
         messages.error(request, f"{booked} Reservations can't be maed on the date !")
+
         raise CreateError()
 
     except (room_models.Room.DoesNotExist, CreateError):
@@ -39,6 +39,7 @@ def create(request, room, year, month, day):
             check_in=date_obj,
             check_out=date_obj + datetime.timedelta(days=1),
         )
+
         messages.success(
             request, f"Successful registration of reservation",
         )
