@@ -14,12 +14,8 @@ from django.contrib import messages
 # success Message mixins
 from django.contrib.messages.views import SuccessMessageMixin
 
-# extra
-from reservations.models import Reservation
 
 # Create your views here.
-
-
 # class-based view인 ListView를 사용
 class HomeView(ListView):
 

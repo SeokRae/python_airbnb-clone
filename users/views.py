@@ -79,8 +79,10 @@ class SignUpView(mixins.LoggedOutOnlyView, FormView):
         user = authenticate(self.request, username=email, password=password)
         if user is not None:
             login(self.request, user)
-        user.verify_email()
-        return super().form_valid(form)
+            return super().form_valid(form)
+        else:
+            user.verify_email()
+            return redirect(reverse("core:home"))
 
 
 # email verify
