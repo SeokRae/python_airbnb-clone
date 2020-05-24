@@ -28,3 +28,17 @@ Python, Django, AWS, HTML, CSS, Vanilla JS, Tailwind CSS, Gulp
 15. python manage.py seed_reservations --number 20
 
 ### API Actions
+
+- [x] List Rooms
+- [x] See Room
+- [x] Create Room
+- [ ] Edit Room
+- [ ] Delete Room
+- [ ] Filter Rooms
+- [ ] Add Room to Favourites
+- [ ] Search By Coords
+- [ ] Login
+- [ ] Create Account
+- [ ] See Favs
+- [ ] See Profile
+- [ ] Edit Profile
