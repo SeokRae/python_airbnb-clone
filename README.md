@@ -27,18 +27,49 @@ Python, Django, AWS, HTML, CSS, Vanilla JS, Tailwind CSS, Gulp
 14. python manage.py seed_reservations
 15. python manage.py seed_reservations --number 20
 
-### API Actions
+### Program Actions
 
-- [x] List Rooms
-- [x] See Room
-- [x] Create Room
-- [ ] Edit Room
-- [ ] Delete Room
-- [ ] Filter Rooms
-- [ ] Add Room to Favourites
-- [ ] Search By Coords
-- [ ] Login
-- [ ] Create Account
-- [ ] See Favs
-- [ ] See Profile
-- [ ] Edit Profile
+- Rooms
+
+  - [x] List Rooms
+  - [x] Create Room
+  - [x] Room Detail Page
+  - [x] Update Room Info Page
+  - [x] Room Photo Detail Page
+  - [x] Add Room Photo page
+  - [x] Delete Room Photo
+  - [x] Update Room Photo
+  - [x] Search Room
+
+- Users
+
+  - [x] Login
+  - [x] Logout
+  - [x] GitHub Login
+  - [x] Kakao Login
+  - [x] Create Account
+  - [x] Mail verify
+  - [x] User Profile Page
+  - [x] Update User Profile
+  - [x] Update User Password
+
+- Reservations
+
+  - [x] Create Reservation
+  - [x] Detail Reservation Page
+  - [x] Update Reservation Info Page
+  - [x] Confirm Guest Room's State
+  - [x] Confirm Host Room's State
+
+- Reviews
+
+  - [x] Create Review
+
+- Conversations
+
+  - [x] See Conversation
+  - [x] Create Conversation
+
+- lists
+  - [x] Add Room to Favourites
+  - [x] See favorite Room List
